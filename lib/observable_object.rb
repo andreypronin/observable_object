@@ -103,8 +103,8 @@ module ObservableObject
       !@obj
     end
 
-    def method_defined?(mname)
-      @obj.method_defined?(mname)
+    def respond_to?(mname)
+      @obj.respond_to?(mname)
     end
     def method_missing(mname,*args,&block)
       @watcher.remember { @obj }
