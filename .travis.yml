@@ -8,7 +8,7 @@ branches:
   only:
     - master
 
-script: rake spec
+script: bundle exec rake spec
 
 before_install:
   - gem update --system
