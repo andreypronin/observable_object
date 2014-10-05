@@ -27,6 +27,30 @@ describe ObservableObject do
     end
   end
 
+  it 'provides correct "!" operator' do
+    ObservableObjectTest::NonBasicObjects.each do |obj|
+      wrapped = ObservableObject.wrap(obj) { |p| ; }
+      expect(!wrapped).to eq(!obj)
+    end
+  end
+  it 'provides correct "!=" operator' do
+    ObservableObjectTest::NonBasicObjects.each do |obj|
+      wrapped = ObservableObject.wrap(obj) { |p| ; }
+      expect(wrapped != obj).to be false
+    end
+  end
+  it 'provides correct methods' do
+    ObservableObjectTest::NonBasicObjects.each do |obj|
+      # puts "-> #{obj}" 
+      wrapped = ObservableObject.wrap(obj) { |p| ; }
+      
+      expect(obj.class.instance_methods.all? do |mname| 
+        # puts "----> #{mname}" 
+        wrapped.respond_to?(mname) == obj.respond_to?(mname)
+      end).to be true
+    end
+  end
+
   it 'can be used as a key in Hashes instead of the original object (wrap)' do
     hash = Hash.new
     ObservableObjectTest::NonBasicObjects.each do |obj|
