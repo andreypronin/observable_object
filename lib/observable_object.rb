@@ -2,7 +2,7 @@ require "observable_object/version"
 
 module ObservableObject
   class Notifier
-    def initializer(param,&event)
+    def initialize(param,&event)
       @param = param
       @event = event
     end
@@ -22,10 +22,10 @@ module ObservableObject
     end
 
     NonWrappable = [Symbol, Numeric, TrueClass, FalseClass, NilClass]
-    private def self.is_unwrappable(elem)
+    def self.is_unwrappable(elem)
       NonWrappable.any? { |t| elem.is_a?(t) }
     end
-    private def self.wrap_elem(elem,notifier)
+    def self.wrap_elem(elem,notifier)
       is_unwrappable(elem) ? elem : Wrapper.new(elem,:detect,true,notifier)
     end
   end
@@ -41,7 +41,7 @@ module ObservableObject
       StringExceptionMethods = [ :delete ]  # doesn't change the object in case of String
 
       def initialize(obj)
-        @methods = (obj.class==String) ? DefaultMethods-StringExceptionMethods : DefaultMethods
+        @methods = obj.is_a?(String) ? DefaultMethods-StringExceptionMethods : DefaultMethods
       end
       def remember
         # nothing to do
@@ -65,10 +65,11 @@ module ObservableObject
     
     class WatcherCompare
       def remember
-        @obj_before = yield.clone
+        obj = yield
+        @obj_before = obj.clone rescue obj
       end
       def is_state_changing(obj,mname)
-        obj.eql?(@obj_before)
+        !obj.eql?(@obj_before)
       end
     end
 
@@ -92,8 +93,14 @@ module ObservableObject
     def ==(other)
       @obj == other
     end
+    def eql?(other)
+      @obj.eql?(other)
+    end
     def !=(other)
       @obj != other
+    end
+    def !
+      !@obj
     end
 
     def method_defined?(mname)
@@ -102,7 +109,7 @@ module ObservableObject
     def method_missing(mname,*args,&block)
       @watcher.remember { @obj }
 
-      res = @obj.send(mname,*args,&block)
+      res = @obj.__send__(mname,*args,&block)
       chain = @obj.equal?(res)                # did the wrapped object return itself from this method?
       
       if @watcher.is_state_changing(@obj,mname)
@@ -116,10 +123,9 @@ module ObservableObject
   
   # Main API
   def self.wrap(obj,methods=:detect,&event)
-    Wrapper.new(obj,methods,false,nil,&event)
+    DeepWrap.is_unwrappable(obj) ? obj : Wrapper.new(obj,methods,false,nil,&event)
   end
   def self.deep_wrap(obj,methods=:detect,&event)
-    Wrapper.new(obj,methods,true,nil,&event)
+    DeepWrap.is_unwrappable(obj) ? obj : Wrapper.new(obj,methods,true,nil,&event)
   end
 end
-
