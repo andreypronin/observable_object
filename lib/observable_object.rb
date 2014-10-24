@@ -102,6 +102,11 @@ module ObservableObject
     def !
       !@obj
     end
+    
+    # special handling to let Array(), Hash() etc. work
+    %i[to_ary to_hash to_str].each do |name| 
+      define_method(name) { @obj.__send__(name) }
+    end
 
     def respond_to?(mname)
       @obj.respond_to?(mname)

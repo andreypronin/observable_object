@@ -107,6 +107,42 @@ describe ObservableObject do
     expect(event_obj_list.all? { |x| x == wrapped }).to be true
   end
   
+  it 'works with Array()' do
+    obj = [1,2,3]
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( Array(wrapped) ).to eq obj
+  end
+  it 'works with Hash()' do
+    obj = {'a'=>1}
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( Hash(wrapped) ).to eq obj
+  end
+  it 'works with String()' do
+    obj = 'string'
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( String(wrapped) ).to eq obj
+  end
+  it 'works with Complex()' do
+    obj = 1+2i
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( Complex(wrapped) ).to eq obj
+  end
+  it 'works with Float()' do
+    obj = 22.73
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( Float(wrapped) ).to eq obj
+  end
+  it 'works with Integer()' do
+    obj = 18
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( Integer(wrapped) ).to eq obj
+  end
+  it 'works with Rational()' do
+    obj = 2/3.to_r
+    wrapped = ObservableObject.deep_wrap(obj,&event)
+    expect( Rational(wrapped) ).to eq obj
+  end
+  
   # TODO: fix the case below, if there is an efficient solution. Not a bug, annoyance.
   # it 'does not call event handler after an already deleted sub-object is modified' do
   #   obj = [[1,2],[3,4]]
