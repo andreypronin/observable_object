@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2014 [CONTRIBUTORS.md](https://github.com/moonfly/observable_object/master/CONTRIBUTORS.md)
+Copyright (c) 2014 [CONTRIBUTORS.md](https://github.com/moonfly/observable_object/blob/master/CONTRIBUTORS.md)
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
